@@ -1,0 +1,14 @@
+flutter_native_splash:
+  color: "#DFECDB"
+  image: assets/images/lightToDoIcon.png
+
+  color_dark: "#060E1E"
+  image_dark: assets/images/darkToDoIcon.png
+
+  android_12:
+    image: assets/images/lightToDoIcon.png
+    color: "#DFECDB"
+
+    image_dark: "assets/images/darkToDoIcon.png"
+    color_dark: "#060E1E"
+    

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/core/utils/app_styles.dart';
+import 'package:todo_app/core/widgets/add_task_bottom_sheet.dart';
 import 'package:todo_app/presentation/screens/home/tabs/settings/settings_tab.dart';
 import 'package:todo_app/presentation/screens/home/tabs/tasks/tasks_tab.dart';
 
@@ -12,29 +13,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Widget> tabs = const [
-    TasksTab(),
-    SettingsTab(),
-  ];
-
+  List<Widget> tabs = [];
   int currentTab = 0;
+  GlobalKey<TasksTabState> tasksTabState = GlobalKey();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    tabs = [
+      TasksTab(
+        key: tasksTabState,
+      ),
+      const SettingsTab(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        flexibleSpace: Padding(
-          padding: EdgeInsets.only(
-            top: 70.0.h,
-            left: 52.0.w,
-          ),
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: Text(
-              "ToDo List",
-              style: LightAppStyle.appBar,
-            ),
-          ),
+        titleSpacing: 60.0.w,
+        title: Text(
+          "ToDo List",
+          style: LightAppStyle.appBar,
         ),
       ),
       body: tabs[currentTab],
@@ -79,7 +80,10 @@ class _HomePageState extends State<HomePage> {
 
   Widget buildFAB() {
     return FloatingActionButton(
-      onPressed: () {},
+      onPressed: () async {
+        await AddTaskBottomSheet.show(context);
+        tasksTabState.currentState?.getTasksFromFireStore();
+      },
       child: const Icon(
         Icons.add,
       ),
