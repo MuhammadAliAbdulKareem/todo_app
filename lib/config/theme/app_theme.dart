@@ -6,9 +6,9 @@ class AppTheme {
   static ThemeData light = ThemeData(
     scaffoldBackgroundColor: ColorsManager.greenAccent,
     useMaterial3: false,
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: ColorsManager.blue,
-      toolbarHeight: 157.h,
+      // toolbarHeight: 157.h,
       elevation: 0.0,
     ),
     bottomAppBarTheme: const BottomAppBarTheme(
@@ -35,6 +35,17 @@ class AppTheme {
       iconSize: 32.r,
       foregroundColor: ColorsManager.white,
       backgroundColor: ColorsManager.blue,
+    ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: ColorsManager.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(
+            16.0.r,
+          ),
+          topLeft: Radius.circular(16.0.r),
+        ),
+      ),
     ),
   );
   static ThemeData dark = ThemeData(
