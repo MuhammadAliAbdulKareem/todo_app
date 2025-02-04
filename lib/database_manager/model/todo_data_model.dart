@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TaskDataModel {
   static const String collectionName = 'todo';
   String id;
@@ -7,17 +9,17 @@ class TaskDataModel {
   bool status;
 
   TaskDataModel(
-      {required this.id,
+      {this.id = '',
       required this.title,
       required this.description,
       required this.dateTime,
-      required this.status});
+      this.status = false});
 
   Map<String, dynamic> toFireStore() => {
         'id': id,
         'title': title,
         'description': description,
-        'date': dateTime,
+        'date': Timestamp.fromDate(dateTime),
         'status': status,
       };
 
@@ -26,7 +28,8 @@ class TaskDataModel {
           id: taskData['id'],
           title: taskData['title'],
           description: taskData['description'],
-          dateTime: taskData['date'].toDate(),
+          dateTime: (taskData['date'] as Timestamp).toDate(),
+          // dateTime: taskData['date'].toDate(),
           status: taskData['status']);
   // TaskDataModel.fromFireStore(Map<String, dynamic> taskData)
   //     : this(

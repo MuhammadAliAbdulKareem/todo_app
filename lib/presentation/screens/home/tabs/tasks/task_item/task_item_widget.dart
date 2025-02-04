@@ -3,10 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/core/utils/colors_manager.dart';
 import 'package:todo_app/core/utils/extensions/date_format.dart';
 import 'package:todo_app/core/utils/route_manager.dart';
 import 'package:todo_app/database_manager/model/todo_data_model.dart';
+import 'package:todo_app/provider/tasks_provider.dart';
 
 import '../../../../../../core/utils/app_styles.dart';
 import '../../../../../../core/utils/assets_manager.dart';
@@ -26,6 +28,7 @@ class TaskItem extends StatefulWidget {
 class _TaskItemState extends State<TaskItem> {
   @override
   Widget build(BuildContext context) {
+    TasksProvider tasksProvider = Provider.of<TasksProvider>(context);
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 24.0.w, vertical: 16.0.h),
       decoration: BoxDecoration(
@@ -40,7 +43,9 @@ class _TaskItemState extends State<TaskItem> {
           motion: const DrawerMotion(),
           children: [
             SlidableAction(
-              onPressed: (context) {},
+              onPressed: (context) {
+                tasksProvider.deleteTaskFromFireStore(widget.task);
+              },
               backgroundColor: ColorsManager.red,
               foregroundColor: ColorsManager.white,
               icon: Icons.delete,
@@ -61,10 +66,18 @@ class _TaskItemState extends State<TaskItem> {
             motion: const DrawerMotion(),
             children: [
               SlidableAction(
-                onPressed: (context) => Navigator.pushNamed(
-                  context,
-                  RouteManager.taskEditing,
-                ),
+                onPressed: (context) {
+                  Navigator.pushNamed(
+                    context,
+                    RouteManager.taskEditing,
+                    arguments: widget.task,
+                  );
+                  // ).then((value) {
+                  //   if (value == true) {
+                  //     tasksProvider.getTasksByDateFromFireStore();
+                  //   }
+                  // });
+                },
                 backgroundColor: ColorsManager.blue,
                 foregroundColor: Colors.white,
                 icon: Icons.edit,
@@ -146,4 +159,11 @@ class _TaskItemState extends State<TaskItem> {
       ),
     );
   }
+
+  // void deleteTaskFromFireStore(TaskDataModel task) async {
+  //   CollectionReference todoCollection =
+  //       FirebaseFirestore.instance.collection(TaskDataModel.collectionName);
+  //   DocumentReference todoDoc = todoCollection.doc(task.id);
+  //   await todoDoc.delete();
+  // }
 }

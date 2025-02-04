@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'custom_task.dart';
+import 'custom_bottom_sheet.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
   const AddTaskBottomSheet({super.key});
@@ -20,12 +20,12 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   DateTime selectedDate = DateTime.now();
   @override
   Widget build(BuildContext context) {
-    return CustomTaskCard(
-      context: context,
+    return CustomBottomSheet(
+      // context: context,
       selectedDate: selectedDate,
       cardTitle: 'Add New Task',
       buttonLabel: 'Add Task',
-      cardHeight: 425.h,
+      cardHeight: 500.h,
       isBottomSheet: true,
     );
   }

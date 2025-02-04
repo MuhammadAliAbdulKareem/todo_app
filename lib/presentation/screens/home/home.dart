@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/core/utils/app_styles.dart';
 import 'package:todo_app/core/widgets/add_task_bottom_sheet.dart';
 import 'package:todo_app/presentation/screens/home/tabs/settings/settings_tab.dart';
 import 'package:todo_app/presentation/screens/home/tabs/tasks/tasks_tab.dart';
+import 'package:todo_app/provider/tasks_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,23 +15,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Widget> tabs = [];
+  List<Widget> tabs = [
+    const TasksTab(),
+    const SettingsTab(),
+  ];
   int currentTab = 0;
-  GlobalKey<TasksTabState> tasksTabState = GlobalKey();
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    tabs = [
-      TasksTab(
-        key: tasksTabState,
-      ),
-      const SettingsTab(),
-    ];
-  }
 
   @override
   Widget build(BuildContext context) {
+    TasksProvider tasksProvider = Provider.of<TasksProvider>(context);
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 60.0.w,
@@ -39,7 +33,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: tabs[currentTab],
-      floatingActionButton: buildFAB(),
+      floatingActionButton: buildFAB(tasksProvider),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: buildBNV(),
     );
@@ -78,11 +72,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget buildFAB() {
+  Widget buildFAB(TasksProvider tasksProvider) {
     return FloatingActionButton(
       onPressed: () async {
         await AddTaskBottomSheet.show(context);
-        tasksTabState.currentState?.getTasksFromFireStore();
+        // tasksTabState.currentState?.getTasksFromFireStore();
+        tasksProvider.getTasksByDateFromFireStore();
       },
       child: const Icon(
         Icons.add,

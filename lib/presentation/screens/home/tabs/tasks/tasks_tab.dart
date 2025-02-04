@@ -1,16 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/core/utils/app_styles.dart';
 import 'package:todo_app/core/utils/colors_manager.dart';
 import 'package:todo_app/core/utils/extensions/date_format.dart';
-import 'package:todo_app/database_manager/model/todo_data_model.dart';
 import 'package:todo_app/presentation/screens/home/tabs/tasks/task_item/task_item_widget.dart';
+import 'package:todo_app/provider/tasks_provider.dart';
 
 class TasksTab extends StatefulWidget {
-  TasksTab({super.key});
-  List<TaskDataModel> tasksList = [];
+  const TasksTab({super.key});
 
   @override
   State<TasksTab> createState() => TasksTabState();
@@ -19,14 +18,9 @@ class TasksTab extends StatefulWidget {
 class TasksTabState extends State<TasksTab> {
   DateTime calenderSelectedDate = DateTime.now();
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getTasksFromFireStore();
-  }
-
   @override
   Widget build(BuildContext context) {
+    TasksProvider tasksProvider = Provider.of<TasksProvider>(context);
     return Column(
       children: [
         Stack(
@@ -35,14 +29,14 @@ class TasksTabState extends State<TasksTab> {
               color: ColorsManager.blue,
               height: 70.0.h,
             ),
-            buildCalender(),
+            buildCalender(tasksProvider),
           ],
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: widget.tasksList.length,
+            itemCount: tasksProvider.allTasks.length,
             itemBuilder: (_, index) => TaskItem(
-              task: widget.tasksList[index],
+              task: tasksProvider.allTasks[index],
             ),
           ),
         )
@@ -50,7 +44,7 @@ class TasksTabState extends State<TasksTab> {
     );
   }
 
-  EasyInfiniteDateTimeLine buildCalender() {
+  EasyInfiniteDateTimeLine buildCalender(TasksProvider tasksProvider) {
     return EasyInfiniteDateTimeLine(
       timeLineProps: EasyTimeLineProps(vPadding: 16.0.r),
       showTimelineHeader: false,
@@ -59,15 +53,13 @@ class TasksTabState extends State<TasksTab> {
           days: 365,
         ),
       ),
-      focusDate: calenderSelectedDate,
+      focusDate: tasksProvider.selectedDate,
       lastDate: DateTime.now().add(
         const Duration(days: 365),
       ),
       itemBuilder: (context, date, isSelected, onTap) => InkWell(
         onTap: () {
-          calenderSelectedDate = date;
-          getTasksFromFireStore();
-          setState(() {});
+          tasksProvider.changeSelectedDate(date);
         },
         child: Card(
           elevation: 8.0,
@@ -99,22 +91,22 @@ class TasksTabState extends State<TasksTab> {
     );
   }
 
-  void getTasksFromFireStore() async {
-    CollectionReference todoCollection =
-        FirebaseFirestore.instance.collection(TaskDataModel.collectionName);
-    QuerySnapshot collectionSnapShot = await todoCollection.get();
-    List<QueryDocumentSnapshot> documentSnapShot = collectionSnapShot.docs;
-    widget.tasksList = documentSnapShot.map((docSnapShot) {
-      Map<String, dynamic> json = docSnapShot.data() as Map<String, dynamic>;
-      TaskDataModel task = TaskDataModel.fromFireStore(json);
-      return task;
-    }).toList();
-    widget.tasksList = widget.tasksList
-        .where((task) =>
-            task.dateTime.day == calenderSelectedDate.day &&
-            task.dateTime.month == calenderSelectedDate.month &&
-            task.dateTime.year == calenderSelectedDate.year)
-        .toList();
-    setState(() {});
-  }
+  // void getTasksFromFireStore() async {
+  //   CollectionReference todoCollection =
+  //       FirebaseFirestore.instance.collection(TaskDataModel.collectionName);
+  //   QuerySnapshot collectionSnapShot = await todoCollection.get();
+  //   List<QueryDocumentSnapshot> documentSnapShot = collectionSnapShot.docs;
+  //   widget.tasksList = documentSnapShot.map((docSnapShot) {
+  //     Map<String, dynamic> json = docSnapShot.data() as Map<String, dynamic>;
+  //     TaskDataModel task = TaskDataModel.fromFireStore(json);
+  //     return task;
+  //   }).toList();
+  //   widget.tasksList = widget.tasksList
+  //       .where((task) =>
+  //           task.dateTime.day == calenderSelectedDate.day &&
+  //           task.dateTime.month == calenderSelectedDate.month &&
+  //           task.dateTime.year == calenderSelectedDate.year)
+  //       .toList();
+  //   setState(() {});
+  // }
 }
