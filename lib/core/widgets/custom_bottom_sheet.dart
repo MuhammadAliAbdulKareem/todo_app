@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/core/utils/extensions/date_format.dart';
+import 'package:todo_app/core/widgets/custom_text_form_field.dart';
 import 'package:todo_app/database_manager/model/todo_data_model.dart';
 import 'package:todo_app/presentation/screens/home/tabs/tasks/tasks_tab.dart';
 import 'package:todo_app/provider/tasks_provider.dart';
@@ -71,21 +72,19 @@ class CustomBottomSheetState extends State<CustomBottomSheet> {
               style: LightAppStyle.bottomSheetLabel,
             ),
             16.verticalSpace,
-            TextFormField(
+            CustomTextFormField(
+              controller: widget.titleController,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return 'Plz, Enter The Task Title';
                 }
                 return null;
               },
-              controller: widget.titleController,
-              decoration: InputDecoration(
-                hintText: "Enter Your Task Title",
-                hintStyle: LightAppStyle.textFieldHint,
-              ),
+              hintText: "Enter The Task Title",
             ),
             16.verticalSpace,
-            TextFormField(
+            CustomTextFormField(
+              hintText: "Enter Your Task Description",
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return 'Plz, Enter The Task Descripion';
@@ -96,28 +95,6 @@ class CustomBottomSheetState extends State<CustomBottomSheet> {
                 return null;
               },
               controller: widget.descriptionController,
-              maxLines: 5,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    12.0.r,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      12.0.r,
-                    ),
-                    borderSide: const BorderSide(
-                      color: ColorsManager.blue,
-                    )),
-                errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      12.0.r,
-                    ),
-                    borderSide: const BorderSide(color: Colors.red)),
-                hintText: "Enter Your Task Description",
-                hintStyle: LightAppStyle.textFieldHint,
-              ),
             ),
             16.verticalSpace,
             InkWell(
