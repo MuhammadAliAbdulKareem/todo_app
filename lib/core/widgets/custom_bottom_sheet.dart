@@ -207,7 +207,6 @@ class CustomBottomSheetState extends State<CustomBottomSheet> {
           ),
         ) ??
         widget.selectedDate;
-    // setState(() {});
   }
 
   // void addTaskToFireStore() {
