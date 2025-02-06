@@ -7,6 +7,8 @@ import 'package:todo_app/presentation/screens/home/tabs/settings/settings_tab.da
 import 'package:todo_app/presentation/screens/home/tabs/tasks/tasks_tab.dart';
 import 'package:todo_app/provider/tasks_provider.dart';
 
+import '../../../core/utils/colors_manager.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -19,7 +21,7 @@ class _HomePageState extends State<HomePage> {
     const TasksTab(),
     const SettingsTab(),
   ];
-  int currentTab = 0;
+  int _currentTab = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class _HomePageState extends State<HomePage> {
           style: LightAppStyle.appBar,
         ),
       ),
-      body: tabs[currentTab],
+      body: tabs[_currentTab],
       floatingActionButton: buildFAB(tasksProvider),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: buildBNV(),
@@ -52,9 +54,9 @@ class _HomePageState extends State<HomePage> {
       child: BottomAppBar(
         notchMargin: 12.0.r,
         child: BottomNavigationBar(
-          currentIndex: currentTab,
+          currentIndex: _currentTab,
           onTap: (index) {
-            currentTab = index;
+            _currentTab = index;
             setState(() {});
           },
           items: const [
@@ -74,11 +76,28 @@ class _HomePageState extends State<HomePage> {
 
   Widget buildFAB(TasksProvider tasksProvider) {
     return FloatingActionButton(
-      onPressed: () async {
-        await AddTaskBottomSheet.show(context);
-        // tasksTabState.currentState?.getTasksFromFireStore();
-        tasksProvider.getTasksByDateFromFireStore();
-      },
+      backgroundColor: tasksProvider.selectedDate.isBefore(
+        DateTime.now().subtract(
+          const Duration(
+            days: 1,
+          ),
+        ),
+      )
+          ? ColorsManager.grey
+          : null,
+      onPressed: tasksProvider.selectedDate.isBefore(
+        DateTime.now().subtract(
+          const Duration(
+            days: 1,
+          ),
+        ),
+      )
+          ? null
+          : () async {
+              await AddTaskBottomSheet.show(context);
+              // tasksTabState.currentState?.getTasksFromFireStore();
+              tasksProvider.getTasksByDateFromFireStore();
+            },
       child: const Icon(
         Icons.add,
       ),

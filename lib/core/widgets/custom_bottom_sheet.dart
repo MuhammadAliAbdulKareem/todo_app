@@ -84,6 +84,7 @@ class CustomBottomSheetState extends State<CustomBottomSheet> {
             ),
             16.verticalSpace,
             CustomTextFormField(
+              maxLines: 5,
               hintText: "Enter Your Task Description",
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
@@ -118,7 +119,7 @@ class CustomBottomSheetState extends State<CustomBottomSheet> {
             ElevatedButton(
               onPressed: widget.isLoading
                   ? null
-                  : () {
+                  : () async {
                       if (widget.isBottomSheet) {
                         if (widget.formKey.currentState?.validate() == false) {
                           return;
@@ -127,7 +128,7 @@ class CustomBottomSheetState extends State<CustomBottomSheet> {
                           widget.isLoading = true;
                         });
 
-                        tasksProvider.addTaskToFireStore(
+                        await tasksProvider.addTaskToFireStore(
                           TaskDataModel(
                               dateTime: DateTime(
                                 widget.selectedDate.year,
@@ -140,7 +141,7 @@ class CustomBottomSheetState extends State<CustomBottomSheet> {
                               description:
                                   widget.descriptionController.text.trim()),
                         );
-                        Navigator.pop(context);
+                        if (context.mounted) Navigator.pop(context);
                       } else {
                         if (widget.formKey.currentState?.validate() == false) {
                           return;
@@ -160,9 +161,10 @@ class CustomBottomSheetState extends State<CustomBottomSheet> {
                         widget.task!.title = widget.titleController.text.trim();
                         widget.task!.description =
                             widget.descriptionController.text.trim();
-                        tasksProvider.updateTaskFromFireStore(widget.task);
+                        await tasksProvider
+                            .updateTaskFromFireStore(widget.task);
 
-                        Navigator.pop(context);
+                        if (context.mounted) Navigator.pop(context);
                       }
                       setState(() {
                         widget.isLoading = false;

@@ -43,8 +43,8 @@ class _TaskItemState extends State<TaskItem> {
           motion: const DrawerMotion(),
           children: [
             SlidableAction(
-              onPressed: (context) {
-                tasksProvider.deleteTaskFromFireStore(widget.task);
+              onPressed: (context) async {
+                await tasksProvider.deleteTaskFromFireStore(widget.task);
               },
               backgroundColor: ColorsManager.red,
               foregroundColor: ColorsManager.white,

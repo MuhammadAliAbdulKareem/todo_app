@@ -1,6 +1,7 @@
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/core/utils/app_styles.dart';
 import 'package:todo_app/core/utils/colors_manager.dart';
@@ -60,6 +61,13 @@ class TasksTabState extends State<TasksTab> {
       itemBuilder: (context, date, isSelected, onTap) => InkWell(
         onTap: () {
           tasksProvider.changeSelectedDate(date);
+
+          Fluttertoast.showToast(
+            msg: '${tasksProvider.selectedDate}',
+            backgroundColor: Colors.red,
+            gravity: ToastGravity.BOTTOM,
+            toastLength: Toast.LENGTH_LONG,
+          );
         },
         child: Card(
           elevation: 8.0,

@@ -7,12 +7,12 @@ import 'package:todo_app/database_manager/model/todo_data_model.dart';
 class TasksProvider with ChangeNotifier {
   List<TaskDataModel> allTasks = [];
   DateTime selectedDate = DateTime.now();
-  void changeSelectedDate(DateTime newSelectedDate) {
+  void changeSelectedDate(DateTime newSelectedDate) async {
     selectedDate = newSelectedDate;
-    getTasksByDateFromFireStore();
+    await getTasksByDateFromFireStore();
   }
 
-  void getTasksByDateFromFireStore() async {
+  Future<void> getTasksByDateFromFireStore() async {
     try {
       allTasks = await FirebaseServices.getTasksByDate(
         DateTime(
@@ -28,7 +28,7 @@ class TasksProvider with ChangeNotifier {
         backgroundColor: Colors.green,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        toastLength: Toast.LENGTH_LONG,
+        toastLength: Toast.LENGTH_SHORT,
       );
       notifyListeners();
     } catch (e) {
@@ -42,9 +42,12 @@ class TasksProvider with ChangeNotifier {
     }
   }
 
-  void addTaskToFireStore(TaskDataModel newTask) async {
+  Future<void> addTaskToFireStore(TaskDataModel newTask) async {
     try {
-      await FirebaseServices.addTask(newTask);
+      await FirebaseServices.addTask(newTask)
+          .timeout(const Duration(seconds: 3), onTimeout: () async {
+        await getTasksByDateFromFireStore();
+      });
 
       Fluttertoast.showToast(
         msg: 'Task Added Successfully',
@@ -62,12 +65,12 @@ class TasksProvider with ChangeNotifier {
     }
   }
 
-  void updateTaskFromFireStore(TaskDataModel? task) async {
+  Future<void> updateTaskFromFireStore(TaskDataModel? task) async {
     if (task == null) return;
 
     try {
       await FirebaseServices.updateTask(task);
-      getTasksByDateFromFireStore();
+      await getTasksByDateFromFireStore();
       // .then((_) {
       //   if (context.mounted) {
       //     Navigator.pop(context, true);
@@ -95,10 +98,10 @@ class TasksProvider with ChangeNotifier {
     }
   }
 
-  void deleteTaskFromFireStore(TaskDataModel task) async {
+  Future<void> deleteTaskFromFireStore(TaskDataModel task) async {
     try {
       await FirebaseServices.deleteTask(task.id);
-      getTasksByDateFromFireStore();
+      await getTasksByDateFromFireStore();
       Fluttertoast.showToast(
         msg: "Task Deleted Successfully",
         backgroundColor: Colors.green,
